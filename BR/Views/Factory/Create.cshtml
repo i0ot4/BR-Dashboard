@@ -1,0 +1,84 @@
+﻿@model CreatFactoryVM
+@using System.Globalization
+@using BR.Models.VMs
+@using BR.helper
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject ISharedViewLocalizer SharedLocalizer
+@{
+    var url = Context.Request.Path + Context.Request.QueryString;
+    var currentCulture = CultureInfo.CurrentCulture;
+    var supportedCultures = new[]
+            {
+        new CultureInfo("ar-YE"),
+        new CultureInfo("en-US"),
+        // Add other supported cultures here...
+    };
+}
+@{
+    SelectList cities = ViewData["cities"] as SelectList;
+    SelectList directorates = ViewData["directorates"] as SelectList;
+    SelectList neighborhoods = ViewData["neighborhoods"] as SelectList;
+    var id = ViewData["id"];
+}
+
+<div class="row page-titles m-0">
+    <!-- <div class="col-sm-6 p-md-0">
+        <div class="welcome-text text-right">
+            <h4 class="text-primary">كل الحالات</h4>
+        </div>
+    </div> -->
+    <div class="col-sm-6 p-md-0 mt-2 mt-sm-0 d-flex">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="home" asp-action="index">@SharedLocalizer["home"]</a></li>
+            <li class="breadcrumb-item active"><a href="#"> @SharedLocalizer["addFactory"]</a></li>
+        </ol>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="mb-3">@SharedLocalizer["addData"]</h4>
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" value="@id" name="id" />
+            <input type="hidden" asp-for="Image" />
+
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="Image"></label><br>
+                <input name="Image" type="file" class="form-control form-control-lg" placeholder="">
+                <span class="text-danger field-validation-valid" asp-validation-for="Image"></span>
+                <small class="text-muted"></small>
+            </div>
+
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="Description"></label><br>
+                <input asp-for="Description" class="form-control form-control-lg" placeholder="">
+                <span class="text-danger field-validation-valid" asp-validation-for="Description"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="CityId"></label><br>
+                <select asp-for="CityId" class="form-select form-select-lg" placeholder="" asp-items="@cities"></select>
+                <span class="text-danger field-validation-valid" asp-validation-for="CityId"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="DirectorateId"></label><br>
+                <select asp-for="DirectorateId" class="form-select form-select-lg" placeholder="" asp-items="@directorates"></select>
+                <span class="text-danger field-validation-valid" asp-validation-for="DirectorateId"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="NeighborhoodId"></label><br>
+                <select asp-for="NeighborhoodId" class="form-select form-select-lg" placeholder="" asp-items="@neighborhoods"></select>
+                <span class="text-danger field-validation-valid" asp-validation-for="NeighborhoodId"></span>
+                <small class="text-muted"></small>
+            </div>
+
+            <div class="form-group col-md-12 col-sm-12 mt-4 ">
+                <a class="btn btn-secondary  w-20" href="#">@SharedLocalizer["cancel"]</a>
+                <input type="submit" class="btn btn-primary w-40 " value="@SharedLocalizer["Add"]">
+            </div>
+        </form>
+    </div>
+</div>

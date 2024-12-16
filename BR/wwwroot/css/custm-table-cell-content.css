@@ -1,0 +1,17 @@
+﻿
+
+/*
+    هذا  الكلاس يستخدم  لتحكم بحجم عرض محتوى البيانات داخل  
+    عنصر span 
+    in dt  in table 
+    ايضن يوجد دالة بلجافا سكربت عند الضغط على الخلية يقوم بعرض 
+    كل المحتو وعند تكرار العمل يقوم بي الاخفاء
+*/
+.custom-tcell-truncate {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px; /* Adjust this value to your desired limit */
+    cursor: pointer;
+}

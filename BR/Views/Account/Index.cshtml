@@ -1,0 +1,174 @@
+﻿@model IEnumerable<SysUser>
+@using System.Globalization
+@using BR.helper
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject ISharedViewLocalizer SharedLocalizer
+@{
+    var url = Context.Request.Path + Context.Request.QueryString;
+    var currentCulture = CultureInfo.CurrentCulture;
+    var supportedCultures = new[]
+            {
+        new CultureInfo("ar-YE"),
+        new CultureInfo("en-US"),
+        // Add other supported cultures here...
+    };
+}
+
+<div class="row page-titles m-0">
+    <!-- <div class="col-sm-6 p-md-0">
+        <div class="welcome-text text-right">
+            <h4 class="text-primary">كل الحالات</h4>
+        </div>
+    </div> -->
+    <div class="col-sm-6 p-md-0 mt-2 mt-sm-0 d-flex">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="home" asp-action="index">الرئيسية</a></li>
+            <li class="breadcrumb-item active"><a asp-action="index">@SharedLocalizer["users"]</a></li>
+        </ol>
+    </div>
+</div>
+<div class="row ">
+    <div class="col">
+        <div class="card shadow border-0">
+            <div class="card-datatable table-responsive text-nowrap">
+                <div class="row m-3 pt-2">
+                    <div class="col-6 m-0">
+                        <h3 class="card-title h-3 text-right">@SharedLocalizer["users"]</h3>
+                    </div>
+                    <div class="col">
+                        <div class="dt-action-buttons text-end felx-left pt-0 pt-md-0">
+                            <div class="dt-buttons">
+                                <a asp-action="CreateUser" class="dt-button create-new btn btn-primary text-white">
+                                    <span>
+                                        <i class="bx bx-plus me-sm-2"></i>
+                                        <span class="d-none d-sm-inline-block"> @SharedLocalizer["addUser"] </span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="border-1 opacity-100 ">
+                @if (TempData.ContainsKey("msg"))
+                {
+                    <div class="alert alert-success">@TempData["msg"]</div>
+                }
+
+                @if (TempData.ContainsKey("error"))
+                {
+                    <div class="alert alert-danger">@TempData["error"]</div>
+                }
+
+                @if (Model != null && Model.Any()){
+
+                    <table class="datatables-basic table table-head-custom  text-right" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="border-top">
+                            <tr>
+                                <th>العمليات </th>
+                                <th> #ID</th>
+                                <th> رقم الجوال </th>
+                                <th> الاسم </th>
+                                <th> الصورة </th>
+                                <th> النوع</th>
+                                <th> التأكييد </th>
+                                <th> الحالة</th>
+                                <th> تاريخ الاضافة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model){
+                                <tr>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn dropdown-toggle hide-arrow p-0" data-bs-toggle="dropdown">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                @if (!item.IsConfirmed)
+                                                {
+                                                    <a class="dropdown-item" asp-action="ConfirmUser" asp-all-route-data='@new Dictionary<string, string>{{"id",@item.Id.ToString()},{"Confirm",@item.IsConfirmed.ToString()}}'>تأكييد</a>
+                                                }
+                                                @if (item.IsActive)
+                                                {
+                                                    <a class="dropdown-item" asp-action="ChangeIsActive" asp-all-route-data='@new Dictionary<string, string>{{"id",@item.Id.ToString()},{"isActive",@item.IsActive.ToString()}}'>ايقاف</a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="dropdown-item" asp-action="ChangeIsActive" asp-all-route-data='@new Dictionary<string, string>{{"id",@item.Id.ToString()},{"isActive",@item.IsActive.ToString()}}'>تفعيل</a>
+                                                }
+                                                @*  <a asp-action="Edit" asp-route-userId="@EncryptionHelper.Encrypt(@item.Id)" class="dropdown-item"><b>تعديل</b></a> *@
+                                                <a asp-action="ChangePassword" asp-route-userId="@item.Id" class="dropdown-item"><b>تغيير كلمة المرور</b></a>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td >@item.Id.Substring(0,10) ...</td>
+                                    <td>@item.PhoneNumber</td>
+                                    <td>@item.FullName</td>
+                                    <td><img src="@item.Image" width="50" height="50"/></td>
+                                    @if(item.UserType != null)
+                                    {
+                                        @if(item.UserType == UserTypes.Admin)
+                                        {
+                                            <td>@UserTypes.Admin</td>
+                                        }
+                                        else if (item.UserType == UserTypes.User)
+                                        {
+                                            <td>@UserTypes.User</td>
+                                        }
+                                        else if (item.UserType == UserTypes.Customer)
+                                        {
+                                            <td>@UserTypes.Customer</td>
+                                        }
+                                        else if (item.UserType == UserTypes.Contractor)
+                                        {
+                                            <td>@UserTypes.Contractor</td>
+                                        }
+                                        else if (item.UserType == UserTypes.ConstructionShop)
+                                        {
+                                            <td>@UserTypes.ConstructionShop</td>
+                                        }
+                                        else if (item.UserType == UserTypes.Worker)
+                                        {
+                                            <td>@UserTypes.Worker</td>
+                                        }
+                                        else if (item.UserType == UserTypes.Factory)
+                                        {
+                                            <td>@UserTypes.Factory</td>
+                                        }else{
+                                            <td> --- </td>
+                                        }
+                                        
+                                    }
+                                    @if (item.IsConfirmed)
+                                    {
+                                        <td><span class=" text-success">نعم</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span class=" text-danger">انتظار</span></td>
+                                    }
+                                    @if (item.IsActive != null)
+                                    {
+                                        @if (item.IsActive)
+                                        {
+                                            <td><span class=" text-success">فعال</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td><span class=" text-danger">متوقف</span></td>
+                                        }
+                                    }
+                                    <td>@item.CreatedOn</td>
+                                </tr>
+                            }
+                        </tbody>
+                
+                    </table>
+                }else{
+                    <div class="alert alert-info"> لا توجد بيانات حاليا </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿@using BR.Models.VMs
+@model CreateUserVM
+@{
+    SelectList userTypes = ViewData["userTypes"] as SelectList;
+}
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <form method="post" asp-action="CreateUser">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="FullName"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="UserType"></label>
+                <select asp-for="UserType" class="form-select" asp-items="@userTypes">
+                </select>
+                <span asp-validation-for="UserType" class="text-danger"></span>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Save" />
+        </form>
+    </div>
+    <div class="col-2"></div>
+
+</div>

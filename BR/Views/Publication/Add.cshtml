@@ -1,0 +1,73 @@
+﻿@model PublicationVM
+@using System.Globalization
+@using BR.helper
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject ISharedViewLocalizer SharedLocalizer
+@{
+    var url = Context.Request.Path + Context.Request.QueryString;
+    var currentCulture = CultureInfo.CurrentCulture;
+    var supportedCultures = new[]
+            {
+        new CultureInfo("ar-YE"),
+        new CultureInfo("en-US"),
+        // Add other supported cultures here...
+    };
+}
+@{
+    SelectList users = ViewData["users"] as SelectList;
+}
+
+<div class="row page-titles m-0">
+    <!-- <div class="col-sm-6 p-md-0">
+        <div class="welcome-text text-right">
+            <h4 class="text-primary">كل الحالات</h4>
+        </div>
+    </div> -->
+    <div class="col-sm-6 p-md-0 mt-2 mt-sm-0 d-flex">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="home" asp-action="index">@SharedLocalizer["home"]</a></li>
+            <li class="breadcrumb-item active"><a href="/AddPatient.html"> @SharedLocalizer["addPublication"]</a></li>
+        </ol>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="mb-3">@SharedLocalizer["addNew"]</h4>
+
+        <form asp-action="Add" method="post">
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="Title"></label><br>
+                <input asp-for="Title" class="form-control form-control-lg" placeholder="">
+                <span class="text-danger field-validation-valid" asp-validation-for="Title"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="Content"></label><br>
+                <textarea asp-for="Content" class="form-control form-control-lg" placeholder=""></textarea>
+                <span class="text-danger field-validation-valid" asp-validation-for="Content"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="PhoneNumber"></label><br>
+                <input asp-for="PhoneNumber" class="form-control form-control-lg" placeholder="">
+                <span class="text-danger field-validation-valid" asp-validation-for="PhoneNumber"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="form-label" asp-for="UserId"></label><br>
+                <select asp-for="UserId" class="form-select form-select-lg" placeholder="" asp-items="@users"></select>
+                <span class="text-danger field-validation-valid" asp-validation-for="UserId"></span>
+                <small class="text-muted"></small>
+            </div>
+            <div class="form-group col-md-12 col-sm-12 mt-4 ">
+                <a class="btn btn-secondary  w-20" href="#">@SharedLocalizer["cancel"]</a>
+                <input type="submit" class="btn btn-primary w-40 " value="@SharedLocalizer["Add"]">
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+
+}

@@ -1,0 +1,473 @@
+﻿@using System.Globalization
+@using BR.helper
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject ISharedViewLocalizer SharedLocalizer
+<!doctype html>
+<html lang="ar">
+@{
+    var url = Context.Request.Path + Context.Request.QueryString;
+    var currentCulture = CultureInfo.CurrentCulture;
+    var supportedCultures = new[]
+            {
+        new CultureInfo("ar-YE"),
+        new CultureInfo("en-US"),
+        // Add other supported cultures here...
+    };
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BR</title>
+    <link rel="stylesheet" href="~/fonts/boxicons.css">
+    <link rel="stylesheet" href="~/plugins/bootstrap-5.3.2-dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/plugins/datatables-bs5/datatables.bootstrap5.css" />
+    <link rel="stylesheet" href="~/plugins/datatables-responsive-bs5/responsive.bootstrap5.css" />
+    <!-- <link rel="stylesheet" href="plugins/DataTables/DataTables-1.13.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="plugins/DataTables(1)/Responsive-2.5.0/css/responsive.bootstrap.min.css"> -->
+    <link rel="stylesheet" href="~/plugins/node-waves/waves.css" />
+    <link rel="stylesheet" href="~/plugins/materialdesingicons/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="~/css/custm-table-cell-content.css" />
+    <link rel="stylesheet" href="~/css/style.css" />
+
+</head>
+<body dir="rtl">
+    <div class="container-scroller rtl">
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row rtl" style="box-shadow: 0 0 20px rgba(89, 102, 122, 0.1) !important;">
+            <div class="navbar-brand-wrapper d-flex justify-content-center" style="box-shadow: 0 0 20px rgba(89, 102, 122, 0.1) !important; z-index: 3;">
+                <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+                    <a class="navbar-brand brand-logo" href="index.html"><img src="~/images/BRlogo.png" alt="logo" /></a>
+                    <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/logo-mini.svg" alt="logo" /></a>
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                        <span class="mdi mdi-sort-variant"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <ul class="navbar-nav mr-lg-4 w-100">
+                    <li class=" btn" style="background-color: rgba(115, 102, 255, 0.15);padding: 10px 12px;margin-right: 10px;border-radius: 5px; text-align: center; font-weight: 400;font-size: 14px;">
+                        <div id="time-box" style="display: flex; flex-direction: column; align-items: center;">
+                            <a class="mb-1" id="current-day" style="color: #7366ff;"></a>
+
+
+                        </div>
+                    </li>
+                    <li class=" btn" style="background-color: #fee0e8;padding: 10px 12px;margin-right: 10px;border-radius: 5px; text-align: center; font-weight: 400;font-size: 14px;">
+                        <div id="time-box2" style="display: flex; flex-direction: column; align-items: center;">
+
+
+                            <a id="time-counter" style="color: #f84e7a;"></a>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item dropdown mr-1">
+                        <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-bs-toggle="dropdown">
+                            <i class="mdi mdi-message-text mx-0"></i>
+                            <span class="count"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="messageDropdown">
+                            <p class="mb-0 font-weight-normal float-left dropdown-header">الرسائل</p>
+                            <a class="dropdown-item">
+                                <div class="item-thumbnail">
+                                    <img src="images/logo-mini.svg" alt="image" class="profile-pic">
+                                </div>
+                                <div class="item-content flex-grow">
+                                    <h6 class="ellipsis font-weight-normal">
+                                        الرسالة الأولى
+                                    </h6>
+                                    <p class="font-weight-light small-text text-muted mb-0">
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="item-thumbnail">
+                                    <img src="images/auth/register-bg.jpg" alt="image" class="profile-pic">
+                                </div>
+                                <div class="item-content flex-grow">
+                                    <h6 class="ellipsis font-weight-normal">
+                                        الرسالة الثانية
+                                    </h6>
+                                    <p class="font-weight-light small-text text-muted mb-0">
+                                        انتهى موعد الإجتماع
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="item-thumbnail">
+                                    <img src="images/favicon.png" alt="image" class="profile-pic">
+                                </div>
+                                <div class="item-content flex-grow">
+                                    <h6 class="ellipsis font-weight-normal">
+                                        الرسالة الثالثة
+                                    </h6>
+                                    <p class="font-weight-light small-text text-muted mb-0">
+                                        اللقاء القادم تأجل
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+
+                    <form id="language-switcher" asp-controller="Home"
+                          asp-action="SetLanguage" asp-route-returnUrl="@url"
+                          method="post" class="form-horizontal" role="form">
+
+                        @if (currentCulture.Name == "ar-YE")
+                        {
+
+                            <input name="culture" type="hidden" value="en-US" />
+                            <input name="returnUrl" type="hidden" value="@url" />
+                        <li class="nav-item me-2 me-xl-0">
+                            <a id="changelang" class="nav-link">
+                                English
+                                <i class="bx link-info"></i>
+                            </a>
+                        </li>
+                        }
+                        else
+                        {
+
+                        <input name="culture" type="hidden" value="ar-YE" />
+                        <input name="returnUrl" type="hidden" value="@url" />
+                        <li class="nav-item me-2 me-xl-0">
+                            <a id="changelang" class="nav-link">
+                                العربية
+                                <i class="bx link-info"></i>
+                            </a>
+                        </li>
+                        }
+
+
+                    </form>
+
+                    <!-- Style Switcher -->
+                    <li class="nav-item me-2 me-xl-0">
+                        <a class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);">
+                            <i class="bx bx-sm"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown mr-4 " id="toggle-direction">
+                        <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center notification-dropdown" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+                            <i class=" mdi mdi-toggle-switch-off  mx-0"></i>
+
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown mr-4">
+                        <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center notification-dropdown" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
+                            <i class="mdi mdi-bell mx-0"></i>
+                            <span class="count"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="notificationDropdown">
+                            <p class="mb-0 font-weight-normal float-left dropdown-header">الإشعارات</p>
+                            <a class="dropdown-item">
+                                <div class="item-thumbnail">
+                                    <div class="item-icon bg-success">
+                                        <i class="mdi mdi-information mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="item-content">
+                                    <h6 class="font-weight-normal">الإشعار الأول</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        فقط الأن
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="item-thumbnail">
+                                    <div class="item-icon bg-warning">
+                                        <i class="mdi mdi-settings mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="item-content">
+                                    <h6 class="font-weight-normal">الإعدادات</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        رسالة خاصة
+                                    </p>
+                                </div>
+                            </a>
+                            <a class="dropdown-item">
+                                <div class="item-thumbnail">
+                                    <div class="item-icon bg-info">
+                                        <i class="mdi mdi-account-box mx-0"></i>
+                                    </div>
+                                </div>
+                                <div class="item-content">
+                                    <h6 class="font-weight-normal">طلب حجز جديد</h6>
+                                    <p class="font-weight-light small-text mb-0 text-muted">
+                                        2 يوم فائتة
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+                            <img src="~/images/faces/face5.jpg" alt="profile" />
+                            <span class="nav-profile-name"> اصيل الحملي</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                            <a class="dropdown-item">
+                                <i class="mdi mdi-settings text-primary"></i>
+                                الإعدادات
+                            </a>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                                <i class="mdi mdi-logout text-primary"></i>
+                                تسجيل الخروج
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
+        </nav>
+        <div class="container-fluid page-body-wrapper">
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="home" asp-action="index">
+                            <i class="mdi mdi-view-grid  menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["dashboard"] </span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Index">
+                            <i class="mdi mdi-account-group menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["users"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Contractor" asp-action="Index">
+                            <i class="mdi mdi-account-group menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["contractors"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ConstructionShop">
+                            <i class="mdi mdi-shopping menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["constructionShops"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Worker">
+                            <i class="mdi mdi-worker menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["workers"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Factory">
+                            <i class="mdi mdi-worker menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["factories"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Publication">
+                            <i class="mdi mdi-publish menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["publications"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="PreviousWork">
+                            <i class="mdi mdi-book-multiple-variant menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["previousWorks"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="AccountEditRequest">
+                            <i class="mdi mdi-table-edit menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["editRequests"]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                            <i class="mdi mdi-database menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["systemData"]</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="ui-basic">
+                            <ul class="nav flex-column sub-menu text-right">
+                                <li class="nav-item"> <a class="nav-link" asp-controller="City" asp-action="Index">@SharedLocalizer["city"]</a></li>
+                                <li class="nav-item"> <a class="nav-link" asp-controller="Directorate" asp-action="Index">@SharedLocalizer["directorate"]</a></li>
+                                <li class="nav-item"> <a class="nav-link" asp-controller="Neighborhood" asp-action="Index"> @SharedLocalizer["neighborhood"]</a></li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic-role" aria-expanded="false" aria-controls="ui-basic-role">
+                            <i class="mdi mdi-circle-outline menu-icon"></i>
+                            <span class="menu-title">@SharedLocalizer["roles"]</span>
+                            <i class="menu-arrow"></i>
+                        </a>
+                        <div class="collapse" id="ui-basic-role">
+                            <ul class="nav flex-column sub-menu text-right">
+                                <li class="nav-item"> <a class="nav-link" asp-controller="Account" asp-action="ListRoles">@SharedLocalizer["roles"]</a></li>
+                                <li class="nav-item"> <a class="nav-link" asp-controller="Account" asp-action="CreateRole">@SharedLocalizer["createRole"]</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    @RenderBody()
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="~/plugins/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/plugins/jquery/jquery-3.7.1.min.js"></script>
+    <script src="~/plugins/DataTables/DataTables-1.13.8/js/jquery.dataTables.js"></script>
+    <script src="~/plugins/datatables-bs5/datatables-bootstrap5.js"></script>
+    <script src="~/plugins/DataTables(1)/Responsive-2.5.0/js/dataTables.responsive.js"></script>
+    <script src="~/plugins/datatables-responsive-bs5/responsive.bootstrap5.js"></script>
+    <script src="~/js/tables-datatables-advanced.js"></script>
+    <!-- <script src="plugins/DataTables/DataTables-1.13.8/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="plugins/DataTables/DataTables-1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="plugins/DataTables(1)/Responsive-2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="plugins/DataTables(1)/Responsive-2.5.0/js/responsive.bootstrap.min.js"></script> -->
+    <!-- <script src="js/vendor.bundle.base.js"></script> -->
+    <script src="~/js/off-canvas.js"></script>
+    <script src="~/js/template.js"></script>
+    <script src="~/js/dashboard.js"></script>
+    <script src="~/plugins/jquery-countto/jquery.countTo.js"></script>
+    <script src="~/js/script.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        const currentPath = window.location.pathname;
+        console.log("===current path: ", currentPath);
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            const patientData = [
+                { day: "السبت", count: 50 },
+                { day: "الأحد", count: 30 },
+                { day: "الأثنين", count: 35 },
+                { day: "الثلثاء", count: 15 },
+                { day: "الأربعاء", count: 20 },
+                { day: "الخميس", count: 25 },
+
+                // ...
+            ];
+            function calculatePercentages(data) {
+                const totalPatients = data.reduce((sum, entry) => sum + entry.count, 0);
+                return data.map(entry => ({
+                    day: entry.day,
+                    percentage: (entry.count / totalPatients) * 100
+                }));
+            }
+
+            const patientPercentages = calculatePercentages(patientData);
+            const ctx = document.getElementById('patients-chart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: patientPercentages.map(entry => entry.day),
+                    datasets: [{
+                        label: 'الحالات',
+                        data: patientPercentages.map(entry => entry.percentage),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: false,
+                            text: (ctx) => '' + ctx.chart.data.datasets[0].pointStyle,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 50,
+                            title: {
+                                display: true,
+                                text: 'النسبة (%)'
+                            }
+                        }
+                    }
+
+                }
+            });
+            $('#datadTable').DataTable({
+                "aLengthMenu": [
+                    [5, 10, 25, -1],
+                    [5, 10, 25, "All"]
+                ],
+                "iDisplayLength": 10,
+
+                "language": {
+                    "sProcessing": "جارٍ التحميل...",
+                    "sLengthMenu": "أظهر _MENU_ مدخلات",
+                    "sZeroRecords": "لم يعثر على أية سجلات",
+                    "sInfo": "إظهار _START_ إلى _END_ من أصل _TOTAL_ مدخل",
+                    "sInfoEmpty": "يعرض 0 إلى 0 من أصل 0 سجل",
+                    "sInfoFiltered": "(منتقاة من مجموع _MAX_ مُدخل)",
+                    "sInfoPostFix": "",
+                    "sSearch": "ابحث:",
+                    "sUrl": "",
+                    "oPaginate": {
+                        "sFirst": "الأول",
+                        "sPrevious": "السابق",
+                        "sNext": "التالي",
+                        "sLast": "الأخير"
+                    }
+                }
+            });
+
+        });</script>
+    <script>
+        function updateTime() {
+            const currentDate = new Date();
+
+            // Get the current day
+            const days = ['الأحد', 'الأثنين', 'الثلثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const months = ["ياناير", " فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر"];
+            const currentDay = days[currentDate.getDay()];
+            const currentMonth = months[currentDate.getMonth()];
+
+            // Format the current time
+            const currentTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: "2-digit" });
+
+            // Update the HTML elements
+            document.getElementById('current-day').textContent = currentDay + "," + " " + currentMonth + currentDate.getFullYear();
+            document.getElementById('time-counter').textContent = currentTime;
+        }
+
+        // Call the updateTime function initially
+        updateTime();
+
+        // Update the time every second
+        setInterval(updateTime, 1000);
+    </script>
+    <script>
+        $("#changelang").on('click', function () {
+            $("#language-switcher").submit();
+        });
+    </script>
+
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>*@
+
+</body>
+</html>
